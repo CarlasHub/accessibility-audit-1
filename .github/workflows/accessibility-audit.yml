@@ -2,12 +2,6 @@ name: Accessibility audit
 
 on:
   workflow_dispatch:
-    inputs:
-      urls:
-        description: Public HTTPS pages to audit, one per line (maximum 20)
-        required: true
-        type: string
-        default: https://example.com/
 
 permissions:
   contents: read
@@ -16,13 +10,36 @@ jobs:
   audit:
     name: Audit website
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
     steps:
       - id: audit
         name: Run WCAG 2.2 audit
         uses: CarlasHub/accessibility-audit-plugin@v1
         with:
-          urls: ${{ inputs.urls }}
+          urls: |-
+            https://healthmarkets-v2.runmytests.com/
+            https://healthmarkets-v2.runmytests.com/apply
+            https://healthmarkets-v2.runmytests.com/en
+            https://healthmarkets-v2.runmytests.com/en/apply
+            https://healthmarkets-v2.runmytests.com/en/cms-test-blog-template
+            https://healthmarkets-v2.runmytests.com/en/cms-test-generic-template
+            https://healthmarkets-v2.runmytests.com/en/cms-test-qa-healthmarket
+            https://healthmarkets-v2.runmytests.com/en/getting-started
+            https://healthmarkets-v2.runmytests.com/en/how-we-help
+            https://healthmarkets-v2.runmytests.com/en/hub
+            https://healthmarkets-v2.runmytests.com/en/industry-leading-technology-for-agents
+            https://healthmarkets-v2.runmytests.com/en/insurance-agent-jobs
+            https://healthmarkets-v2.runmytests.com/en/insurance-sales-agent-jobs
+            https://healthmarkets-v2.runmytests.com/en/making-an-impact
+            https://healthmarkets-v2.runmytests.com/en/supportive-community
+            https://healthmarkets-v2.runmytests.com/en/your-business-your-way
+            https://healthmarkets-v2.runmytests.com/en/your-success-starts-here
+            https://healthmarkets-v2.runmytests.com/es
+            https://healthmarkets-v2.runmytests.com/getting-started
+            https://healthmarkets-v2.runmytests.com/how-we-help
+          allowed-hosts: 'healthmarkets-v2.runmytests.com'
+          exact-hosts: 'healthmarkets-v2.runmytests.com'
+          max-pages: '20'
           fail-on: none
           comment-on-pr: 'false'
 
@@ -32,7 +49,9 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: accessibility-audit
-          path: ${{ steps.audit.outputs.output-dir }}
+          path: |
+            ${{ steps.audit.outputs.output-dir }}
+            ${{ steps.audit.outputs.archive-path }}
           if-no-files-found: error
           retention-days: 14
 
